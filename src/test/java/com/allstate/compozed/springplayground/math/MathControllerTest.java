@@ -49,4 +49,12 @@ public class MathControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.factorial", Matchers.is(120)));
     }
+
+    @Test
+    public void fibonacciShouldReturn2Given3() throws Exception {
+        mockMvc.perform(get("/math/fibonacci/3"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.fibonacci", Matchers.is(2)));
+
+    }
 }

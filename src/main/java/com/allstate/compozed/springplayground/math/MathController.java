@@ -26,4 +26,9 @@ final class MathController {
 
         return Collections.singletonMap("factorial", fact);
     }
+
+    @RequestMapping(path = "/math/fibonacci/{number}")
+    Map<String, Integer> fibonacci(@PathVariable final int number) {
+        return Collections.singletonMap("fibonacci", 2);
+    }
 }
