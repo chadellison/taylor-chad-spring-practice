@@ -1,5 +1,6 @@
 package com.allstate.compozed.springplayground.math;
 
+import com.fasterxml.jackson.databind.deser.DataFormatReaders;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,5 +34,19 @@ public class MathControllerTest {
         mockMvc.perform(get("/math/square/5"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.square", Matchers.is(25)));
+    }
+
+    @Test
+    public void factorialShouldReturn6Given3() throws Exception {
+        mockMvc.perform(get("/math/factorial/3"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.factorial", Matchers.is(6)));
+    }
+
+    @Test
+    public void factorialShouldReturn120() throws Exception {
+        mockMvc.perform(get("/math/factorial/5"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.factorial", Matchers.is(120)));
     }
 }
