@@ -17,7 +17,7 @@ public class HomeModelTest {
     @Test
     public void getMessageReturnsConstructorMessage () {
         final HomeModel homeModel1 = new HomeModel("message");
-        final HomeModel homeModel2 = new HomeModel("other message");
+        new HomeModel("other message");
 
         assertEquals("message", homeModel1.getMessage());
     }
