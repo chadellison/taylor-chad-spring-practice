@@ -18,7 +18,7 @@ public class LessonController {
     }
 
     @GetMapping
-    Iterable<LessonModel> all() {
+    Iterable<LessonModel> list() {
         return repository.findAll();
     }
 }
