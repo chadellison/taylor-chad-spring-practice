@@ -80,5 +80,7 @@ public class LessonControllerTest {
                 .andExpect(jsonPath("$[0].title", is(title)))
                 .andExpect(jsonPath("$[1].id", is(id2)))
                 .andExpect(jsonPath("$[1].title", is(title2)));
+
+        verify(lessonRepository).findAll();
     }
 }
