@@ -14,17 +14,14 @@ final class MathController {
 
     @RequestMapping(path = "/math/square/{number}")
     Map<String, Integer> square(@PathVariable int number) {
-        return Collections.singletonMap("square", number * number);
+        MathModel math = new MathModel(number);
+        return Collections.singletonMap("square", math.getSquare());
     }
 
     @RequestMapping(path = "/math/factorial/{number}")
     Map<String, Integer> factorial(@PathVariable final int number) {
-
-        Integer fact = IntStream
-                        .rangeClosed(1, number)
-                        .reduce(1, (acc, val) -> acc * val);
-
-        return Collections.singletonMap("factorial", fact);
+        MathModel math = new MathModel(number);
+        return Collections.singletonMap("factorial", math.getFactorial());
     }
 
     @RequestMapping(path = "/math/fibonacci/{number}")
