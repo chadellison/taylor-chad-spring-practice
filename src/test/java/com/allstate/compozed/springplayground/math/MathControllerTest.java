@@ -57,4 +57,11 @@ public class MathControllerTest {
                 .andExpect(jsonPath("$.fibonacci", Matchers.is(2)));
 
     }
+
+    @Test
+    public void fibonacciShouldRetrun13WhenGiven7() throws Exception {
+        mockMvc.perform(get("/math/fibonacci/7"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.fibonacci", Matchers.is(13)));
+    }
 }
