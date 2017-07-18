@@ -26,6 +26,7 @@ final class MathController {
 
     @RequestMapping(path = "/math/fibonacci/{number}")
     Map<String, Integer> fibonacci(@PathVariable final int number) {
-        return Collections.singletonMap("fibonacci", 2);
+        MathModel math = new MathModel(number);
+        return Collections.singletonMap("fibonacci", math.getFibonacci());
     }
 }
