@@ -14,11 +14,14 @@ public class LessonController {
 
     @PostMapping
     LessonModel create(@RequestBody final LessonModel lesson) {
+
         return repository.save(lesson);
     }
 
     @GetMapping
     Iterable<LessonModel> list() {
+
         return repository.findAll();
     }
+    
 }
