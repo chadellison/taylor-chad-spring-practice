@@ -1,7 +1,5 @@
 package com.allstate.compozed.springplayground.lesson;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +12,15 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Random;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.refEq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -56,7 +53,7 @@ public class LessonControllerTest {
     }
 
     @Test
-    public void listDelegatesToRepository() throws Exception{
+    public void listDelegatesToRepository() throws Exception {
         LessonModel lesson = new LessonModel();
         Long id = new Random().nextLong();
         lesson.setId(id);
@@ -82,5 +79,81 @@ public class LessonControllerTest {
                 .andExpect(jsonPath("$[1].title", is(title2)));
 
         verify(lessonRepository).findAll();
+    }
+
+    @Test
+    public void showDelegatesToTheRepository() throws Exception {
+        LessonModel lesson = new LessonModel();
+        Long id = new Random().nextLong();
+        lesson.setId(id);
+        String title = "First Lesson";
+        lesson.setTitle(title);
+
+        when(lessonRepository.findOne(id)).thenReturn(lesson);
+
+        final MockHttpServletRequestBuilder request = get("/lessons/" + id);
+
+        final ResultActions resultActions = mockMvc.perform(request);
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.title", is(title)))
+                .andExpect(jsonPath("$.id", is(id)));
+
+        verify(lessonRepository).findOne(id);
+
+    }
+
+    @Test
+    public void updateDelegatesToTheRepositoryWhenThePathIdMatchesTheBodyId() throws Exception {
+        LessonModel lesson = new LessonModel();
+        lesson.setId(5L);
+        String title = "Updated Lesson";
+        lesson.setTitle(title);
+
+        when(lessonRepository.save(refEq(lesson))).thenReturn(lesson);
+
+        final MockHttpServletRequestBuilder request = patch("/lessons/5")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"id\":5, \"title\":\"Updated Lesson\"}");
+
+        final ResultActions resultActions = mockMvc.perform(request);
+
+        verify(lessonRepository).save(refEq(lesson));
+
+        resultActions.andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(5)))
+                .andExpect(jsonPath("$.title", is(title)));
+
+    }
+
+//    @Test
+//    public void updateReturnsA404WhenThePathIdDoesNotMatchTheBodyId() throws Exception {
+//        LessonModel lesson = new LessonModel();
+//        lesson.setId(5L);
+//        String title = "Updated Lesson";
+//        lesson.setTitle(title);
+//
+//        when(lessonRepository.save(any(LessonModel.class))).then(returnsFirstArg());
+//
+//        final MockHttpServletRequestBuilder request = patch("/lessons/5")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content("{\"id\":6, \"title\":\"Updated Lesson\"}");
+//
+//        final ResultActions resultActions = mockMvc.perform(request);
+//
+//        resultActions.andExpect(status().is4xxClientError());
+//    }
+
+    @Test
+    public void deleteMethodDelegatesToTheRepository() throws Exception {
+        Long id = new Random().nextLong();
+
+
+        final MockHttpServletRequestBuilder request = delete("/lessons/" + id);
+
+        final ResultActions resultActions = mockMvc.perform(request)
+                .andExpect(status().isOk());
+
+        verify(lessonRepository).delete(id);
     }
 }

@@ -23,5 +23,22 @@ public class LessonController {
 
         return repository.findAll();
     }
-    
+
+    @GetMapping("/{id}")
+    LessonModel show(@PathVariable Long id) {
+        return repository.findOne(id);
+    }
+
+    @PatchMapping("/{id}")
+    LessonModel update(@PathVariable Long id, @RequestBody final LessonModel lessonModel) {
+//        if(id.equals(lessonModel.getId())) {
+        return repository.save(lessonModel);
+//        }
+    }
+
+    @DeleteMapping("/{id}")
+    void delete(@PathVariable Long id) {
+        repository.delete(id);
+    }
+
 }
