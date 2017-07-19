@@ -142,7 +142,7 @@ public class LessonControllerTest {
 
         final ResultActions resultActions = mockMvc.perform(request);
 
-        resultActions.andExpect(status().is4xxClientError());
+        resultActions.andExpect(status().isNotFound());
         verify(lessonRepository, never()).save(refEq(lesson));
     }
 
@@ -161,18 +161,18 @@ public class LessonControllerTest {
         verify(lessonRepository).delete(id);
     }
 
-//    @Test
-//    public void deleteMethodReturns404WhenRecordDoesNotExist() throws Exception {
-//
-//        Long id = new Random().nextLong();
-//
-//        final MockHttpServletRequestBuilder request = delete("/lessons/" + id);
-//
-//        final ResultActions resultActions = mockMvc.perform(request)
-//                .andExpect(status().is4xxClientError());
-//
-//        verify(lessonRepository, never()).delete(id);
-//
-//
-//    }
+    @Test
+    public void deleteMethodReturns404WhenRecordDoesNotExist() throws Exception {
+
+        Long id = new Random().nextLong();
+        verify(lessonRepository, never()).delete(id);
+        final MockHttpServletRequestBuilder request = delete("/lessons/" + id);
+
+        final ResultActions resultActions = mockMvc.perform(request)
+                .andExpect(status().isNotFound());
+
+
+
+
+    }
 }

@@ -1,11 +1,9 @@
 package com.allstate.compozed.springplayground.lesson;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RestController
@@ -36,17 +34,21 @@ public class LessonController {
     }
 
     @PatchMapping("/{id}")
-    ResponseEntity<LessonModel> update(@PathVariable Long id, @RequestBody final LessonModel lessonModel, HttpServletResponse response) throws IOException {
+    ResponseEntity<LessonModel> update(@PathVariable Long id, @RequestBody final LessonModel lessonModel) throws IOException {
         if (id.equals(lessonModel.getId())) {
             repository.save(lessonModel);
-            return new ResponseEntity<LessonModel>(lessonModel, HttpStatus.OK);
+            return new ResponseEntity<>(lessonModel, HttpStatus.OK);
         }
-        return new ResponseEntity<LessonModel>(HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
-    void delete(@PathVariable Long id, HttpServletResponse response) throws IOException {
-        repository.delete(id);
+    ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (repository.exists(id)) {
+            repository.delete(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 }
