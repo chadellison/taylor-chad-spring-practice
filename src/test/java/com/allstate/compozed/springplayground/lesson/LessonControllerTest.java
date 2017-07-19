@@ -18,6 +18,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.refEq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -126,27 +127,30 @@ public class LessonControllerTest {
 
     }
 
-//    @Test
-//    public void updateReturnsA404WhenThePathIdDoesNotMatchTheBodyId() throws Exception {
-//        LessonModel lesson = new LessonModel();
-//        lesson.setId(5L);
-//        String title = "Updated Lesson";
-//        lesson.setTitle(title);
-//
-//        when(lessonRepository.save(any(LessonModel.class))).then(returnsFirstArg());
-//
-//        final MockHttpServletRequestBuilder request = patch("/lessons/5")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .content("{\"id\":6, \"title\":\"Updated Lesson\"}");
-//
-//        final ResultActions resultActions = mockMvc.perform(request);
-//
-//        resultActions.andExpect(status().is4xxClientError());
-//    }
+    @Test
+    public void updateReturnsA404WhenThePathIdDoesNotMatchTheBodyId() throws Exception {
+        LessonModel lesson = new LessonModel();
+        lesson.setId(5L);
+        String title = "Updated Lesson";
+        lesson.setTitle(title);
+
+        when(lessonRepository.save(any(LessonModel.class))).then(returnsFirstArg());
+
+        final MockHttpServletRequestBuilder request = patch("/lessons/5")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"id\":6, \"title\":\"Updated Lesson\"}");
+
+        final ResultActions resultActions = mockMvc.perform(request);
+
+        resultActions.andExpect(status().is4xxClientError());
+        verify(lessonRepository, never()).save(refEq(lesson));
+    }
 
     @Test
-    public void deleteMethodDelegatesToTheRepository() throws Exception {
+    public void deleteMethodDelegatesToTheRepositoryWhenRecordExists() throws Exception {
         Long id = new Random().nextLong();
+
+        when(lessonRepository.exists(id)).thenReturn(true);
 
 
         final MockHttpServletRequestBuilder request = delete("/lessons/" + id);
@@ -156,4 +160,19 @@ public class LessonControllerTest {
 
         verify(lessonRepository).delete(id);
     }
+
+//    @Test
+//    public void deleteMethodReturns404WhenRecordDoesNotExist() throws Exception {
+//
+//        Long id = new Random().nextLong();
+//
+//        final MockHttpServletRequestBuilder request = delete("/lessons/" + id);
+//
+//        final ResultActions resultActions = mockMvc.perform(request)
+//                .andExpect(status().is4xxClientError());
+//
+//        verify(lessonRepository, never()).delete(id);
+//
+//
+//    }
 }
